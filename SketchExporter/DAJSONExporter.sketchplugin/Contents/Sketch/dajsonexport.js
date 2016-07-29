@@ -75,8 +75,11 @@ function exportLayerCommon(currentLayer){
     var currentLayerParsed = {};
     var bounds = currentLayer.bounds();
     var origin = currentLayer.origin();
+    var frame = currentLayer.frame();
     currentLayerParsed["bounds"] = bounds;
     currentLayerParsed["origin"] = origin;
+    currentLayerParsed["frame"] = frame;
+
 
     // not all layers have styles; just skip if it's not there or there's no selector
     try{
@@ -107,20 +110,17 @@ function exportLayerCommon(currentLayer){
             var shadows = style.shadows();
             var innerShadows = style.innerShadows();
             var contextSettings = style.contextSettings(); 
-            currentLayerParsed["borders"] = borders;
-            currentLayerParsed["shadows"] = shadows;
-            currentLayerParsed["innerShadows"] = innerShadows;
-            currentLayerParsed["contextSettings"] = contextSettings;
+            //currentLayerParsed["borders"] = borders;
+            //currentLayerParsed["shadows"] = shadows;
+            //currentLayerParsed["innerShadows"] = innerShadows;
+            //currentLayerParsed["contextSettings"] = contextSettings;
         }
     }
     catch(e){
         print(e);
     }
     var cssStyle = currentLayer.CSSAttributes();
-    var frame = currentLayer.frame();
-
-    currentLayerParsed["cssStyle"] = cssStyle;
-    currentLayerParsed["frame"] = frame;
+    //currentLayerParsed["cssStyle"] = cssStyle;
 
     return currentLayerParsed;
 }
