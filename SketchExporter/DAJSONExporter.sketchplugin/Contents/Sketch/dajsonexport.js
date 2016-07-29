@@ -69,45 +69,74 @@ function exportLayer(currentLayer){
     return currentOutput;
 }
 
-function exportMSShapeGroup(currentLayer){
-    var currentLayerParsed = {};
-    var style = currentLayer.style();
-    var borders = style.borders();
-    var fills = style.fills();
-    var shadows = style.shadows();
-    var innerShadows = style.innerShadows();
-    var contextSettings = style.contextSettings();
-    
-    var cssStyle = currentLayer.CSSAttributes();
-    var frame = currentLayer.frame();
-
-    currentLayerParsed["style"] = style;
-    currentLayerParsed["borders"] = borders;
-    currentLayerParsed["fills"] = fills;
-    currentLayerParsed["shadows"] = shadows;
-    currentLayerParsed["innerShadows"] = innerShadows;
-    currentLayerParsed["contextSettings"] = contextSettings;
-    currentLayerParsed["cssStyle"] = cssStyle;
-    currentLayerParsed["frame"] = frame;
-    return {"UIView" : currentLayerParsed};
-}
-
+// Layer common properties
 function exportLayerCommon(currentLayer){
     var currentLayerParsed = {};
     var bounds = currentLayer.bounds();
     var origin = currentLayer.origin();
-
     currentLayerParsed["bounds"] = bounds;
     currentLayerParsed["origin"] = origin;
+
+    // not all layers have styles; just skip if it's not there or there's no selector
+    try{
+        var style = currentLayer.style();
+        if (style)
+        {
+            var borders = style.borders();
+            var fills = style.fills();
+            if (fills)
+            {
+                for (var i=0; i < fills.count(); i++)
+                {
+                    var currentFill = fills[i];
+                    if (currentFill.fillType() == 0) // fill
+                    {
+                        currentLayerParsed["backgroundColor"] = currentFill.colorGeneric();
+                    }
+                    else if (currentFill.fillType() == 1) // gradient
+                    {
+                        // not supported yet
+                    }
+                    else if (currentFill.fillType() == 4) // image
+                    {
+                        currentLayerParsed["image"] = currentFill.image();
+                    }
+                }
+            }
+            var shadows = style.shadows();
+            var innerShadows = style.innerShadows();
+            var contextSettings = style.contextSettings(); 
+            currentLayerParsed["borders"] = borders;
+            currentLayerParsed["shadows"] = shadows;
+            currentLayerParsed["innerShadows"] = innerShadows;
+            currentLayerParsed["contextSettings"] = contextSettings;
+        }
+    }
+    catch(e){
+        print(e);
+    }
+    var cssStyle = currentLayer.CSSAttributes();
+    var frame = currentLayer.frame();
+
+    currentLayerParsed["cssStyle"] = cssStyle;
+    currentLayerParsed["frame"] = frame;
 
     return currentLayerParsed;
 }
 
+// Root shape group, parsed as the parent container
+function exportMSShapeGroup(currentLayer){
+    var currentLayerParsed = exportLayerCommon(currentLayer);
+    return {"UIView" : currentLayerParsed};
+}
+
+// Rectangle shape. Parse as a UIView
 function exportMSRectangleShape(currentLayer){
     var currentLayerParsed = exportLayerCommon(currentLayer);
     return {"UIView" : currentLayerParsed};
 }
 
+// Text layer. Parse as a UILabel
 function exportMSTextLayer(currentLayer){
     var currentLayerParsed = exportLayerCommon(currentLayer);
     
@@ -119,3 +148,5 @@ function exportMSTextLayer(currentLayer){
 
     return {"UILabel" : currentLayerParsed};
 }
+
+// 
