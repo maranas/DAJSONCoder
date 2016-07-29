@@ -13,6 +13,7 @@ function onRun(context){
         }
     }
     print(exportedLayers); // JSON encode this!
+    //print(JSON.stringify(exportedLayers, null, 2));
 }
 
 function exportLayer(currentLayer){
