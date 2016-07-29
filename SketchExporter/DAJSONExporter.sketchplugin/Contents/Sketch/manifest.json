@@ -1,0 +1,17 @@
+{
+    "name" : "DAJSONExporter",
+    "description" : "Exports to JSON that DAJSONExporter can decode",
+    "version" : "0.1",
+    "identifier" : "com.dajsoncoder.plugins.sketch-export",
+    "author" : "Moises",
+    "authorEmail" : "moises.aranas@gmail.com",
+    "commands" : [
+    {
+      "name" : "DAJSON Export",
+      "identifier" : "dajsonexport",
+      "script" : "dajsonexport.js",
+      "handler" : "onRun",
+      "shortcut" : "",
+    }
+    ],
+}
