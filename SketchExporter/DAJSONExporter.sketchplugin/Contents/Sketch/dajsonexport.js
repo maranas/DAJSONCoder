@@ -99,7 +99,7 @@ function exportLayerCommon(currentLayer){
                     }
                     else if (currentFill.fillType() == 4) // image
                     {
-                        currentLayerParsed["image"] = currentFill.image();
+                        currentLayerParsed["image"] = currentFill.image().image();
                     }
                 }
             }
@@ -127,13 +127,19 @@ function exportLayerCommon(currentLayer){
 // Root shape group, parsed as the parent container
 function exportMSShapeGroup(currentLayer){
     var currentLayerParsed = exportLayerCommon(currentLayer);
-    return {"UIView" : currentLayerParsed};
+    var className = classForParsedLayer(currentLayerParsed);
+    var ret = {};
+    ret[className] = currentLayerParsed;
+    return ret;
 }
 
-// Rectangle shape. Parse as a UIView
+// Rectangle shape. Parse as a UIView unless there is an image
 function exportMSRectangleShape(currentLayer){
     var currentLayerParsed = exportLayerCommon(currentLayer);
-    return {"UIView" : currentLayerParsed};
+    var className = classForParsedLayer(currentLayerParsed);
+    var ret = {};
+    ret[className] = currentLayerParsed;
+    return ret;
 }
 
 // Text layer. Parse as a UILabel
@@ -149,4 +155,14 @@ function exportMSTextLayer(currentLayer){
     return {"UILabel" : currentLayerParsed};
 }
 
-// 
+function classForParsedLayer(parsedLayer)
+{
+    if (parsedLayer["image"])
+    {
+        return "UIImageView";
+    }
+    else
+    {
+        return "UIView";
+    }
+}
